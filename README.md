@@ -13,6 +13,7 @@ This repository collects **minimal, reproducible experiments** run on real hardw
 | # | Stage | Experiment | What It Verifies | Key Measured Result |
 |---:|---|---|---|---|
 | 00 | Day 0 (Safety) | [**macOS `sandbox-exec` for AI Agents**](experiments/01-macos-sandbox-exec/) | Can OS kernel Seatbelt profiles deterministically block `.env` reads (including symlink & Python bypasses) and out-of-workspace writes? | 100% blocked (`Operation not permitted`); **`+18.04 ms`** overhead over 50 runs on Apple M3 |
+| 01 | Part 1 / Case 01 | [**BPE Tokenizer Blindspots & JP/EN Multiplier**](experiments/case01-tokenizer-blindspot/) | Why does `"strawberry"` fail, how does `' strawberry'` become 1 integer (`73700`), and how much extra KV memory do Japanese logs consume? | `' strawberry'` = 1 token (`73700`); JP log = **`2.0x`** tokens vs EN (`12` vs `6`), mid-Kanji UTF-8 byte split verified |
 
 *(Upcoming in strict curriculum order — Part 1: BPE Tokenizer blindspots, Embedding `x` & ReLU collapse, RAG vs Attention `Q·K` & XGrammar JSON; Part 2: 16GB VRAM budget & GGUF, Prefill vs Decode Roofline, KV cache reuse; Part 3: `vLLM` concurrency & GPU economics; Part 4: Agent OS, 2-stage RAG, Durable execution & private Evals.)*
 
