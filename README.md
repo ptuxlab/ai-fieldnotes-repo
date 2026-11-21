@@ -1,4 +1,4 @@
-# ai-fieldnotes
+# ai-fieldnotes-repo
 
 **Hands-on field notes, reproducible benchmarks, and boundary tests for local LLMs and AI agent systems.**  
 **プロンプト論ではなく、実機計測・境界検証・再現スクリプトだけを残す AI システム現場メモ。**
