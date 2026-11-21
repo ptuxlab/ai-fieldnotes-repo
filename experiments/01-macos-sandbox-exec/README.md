@@ -1,31 +1,14 @@
-# 01. AI Agent Kernel Sandboxing on macOS (`sandbox-exec`)
+# Day 0 · Does this macOS policy enforce its filesystem rules?
 
-Prompt-level rules like *"never read `.env`"* are not a security boundary. String-based path filters inside an agent loop are trivially bypassed via symlinks (`ln -s .env innocent.txt`) or child processes (`python3 -c "open('.env')"`).
+Run `./demo-sandbox-exec.sh` on macOS with `sandbox-exec` and Python 3. It creates a disposable directory, generates a profile for its resolved path and deletes the fixture on exit.
 
-This 1-minute script verifies that a minimal macOS Seatbelt (`sandbox-exec`) profile blocks all of those attempts at the OS kernel layer with negligible overhead.
+| Fixture operation | Required outcome |
+|---|---|
+| Read the ordinary log | Return the exact fixture bytes |
+| Read or write the protected `.env` fixture | Permission denial; original contents unchanged |
+| Write outside the workspace | Permission denial; no file created |
+| Write the ordinary workspace output | Success; expected contents present |
 
-## Quick Run (macOS)
+A mismatch stops the run before benchmarking. The profile describes these filesystem rules, not network isolation or the policy of a separate agent wrapper.
 
-```bash
-chmod +x demo-sandbox-exec.sh
-./demo-sandbox-exec.sh
-```
-
-- Creates a temporary directory under `/tmp` (resolved to `/private/tmp` via `realpath` for Seatbelt compatibility).
-- Automatically deletes all temporary files on exit.
-
-## Measured Results (Apple M3 / macOS 27.2.1)
-
-| # | Test Case | Result | Exit Code |
-|---:|---|---|---:|
-| 1 | Plain `cat workspace/.env` (no sandbox) | Leaks secret value | `0` |
-| 2 | Sandboxed `cat workspace/app.log` | Allowed (normal log read) | `0` |
-| 3 | Sandboxed `cat workspace/.env` | `Operation not permitted` | `1` |
-| 4 | Symlink bypass (`ln -sf .env innocent.txt` → `cat innocent.txt`) | `Operation not permitted` | `1` |
-| 5 | Child-process bypass (`python3 -c "open('.env')"`) | `PermissionError: Operation not permitted` | `1` |
-| 6 | Out-of-workspace write (`outside/pwned.txt`) & `.env` append | `Operation not permitted` (while `workspace/ok.txt` succeeds) | `1` / `0` |
-| 7 | 50-run average overhead (`plain cat` vs `sandbox-exec cat`) | `16.23 ms` vs `34.27 ms` (**`+18.04 ms`**) | `0` |
-
-## Gotcha Worth Remembering
-
-On macOS, `/tmp` is a symlink to `/private/tmp` and `/var` is a symlink to `/private/var`. Seatbelt matches against resolved real paths, so always resolve paths with `realpath` before generating `.sb` profiles.
+**Historical sample:** on an Apple M3, macOS 27.2.1, 50 ordinary `cat` launches averaged 16.23 ms without and 34.27 ms with a profile (difference **18.04 ms**). The script reports a new sample on each run. Relative to a one-second baseline, 18.04 ms is 1.804%; no inference latency was measured.
