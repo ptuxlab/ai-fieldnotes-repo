@@ -10,11 +10,11 @@ This repository collects **minimal, reproducible experiments** run on real hardw
 
 ## Experiments / 実測検証一覧
 
-| # | Experiment | What It Verifies | Key Measured Result |
-|---:|---|---|---|
-| 01 | [**macOS `sandbox-exec` for AI Agents**](experiments/01-macos-sandbox-exec/) | Can OS kernel Seatbelt profiles deterministically block `.env` reads (including symlink & Python bypasses) and out-of-workspace writes? | 100% blocked (`Operation not permitted`); **`+18.04 ms`** overhead over 50 runs on Apple M3 |
+| # | Stage | Experiment | What It Verifies | Key Measured Result |
+|---:|---|---|---|---|
+| 00 | Day 0 (Safety) | [**macOS `sandbox-exec` for AI Agents**](experiments/01-macos-sandbox-exec/) | Can OS kernel Seatbelt profiles deterministically block `.env` reads (including symlink & Python bypasses) and out-of-workspace writes? | 100% blocked (`Operation not permitted`); **`+18.04 ms`** overhead over 50 runs on Apple M3 |
 
-*(More experiments coming weekly: Prefill vs Decode timings, GGUF quantization memory budgets, KV prefix reuse, multi-user serving math, and verifiable research pipelines.)*
+*(Upcoming in strict curriculum order — Part 1: BPE Tokenizer blindspots, Embedding `x` & ReLU collapse, RAG vs Attention `Q·K` & XGrammar JSON; Part 2: 16GB VRAM budget & GGUF, Prefill vs Decode Roofline, KV cache reuse; Part 3: `vLLM` concurrency & GPU economics; Part 4: Agent OS, 2-stage RAG, Durable execution & private Evals.)*
 
 ---
 
